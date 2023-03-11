@@ -1,0 +1,41 @@
+# -*- mode: ruby -*-
+
+Vagrant.configure("2") do |config|
+
+    config.vm.box = "generic/ubuntu2204"
+
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+
+    images_dir = "../../images"
+    if !Dir.exists?(images_dir)
+        Dir.mkdir(images_dir)
+    end
+    config.vm.synced_folder images_dir, "/images"
+
+    submissions_dir = "../../submissions"
+    if !Dir.exists?(submissions_dir)
+        Dir.mkdir(submissions_dir)
+    end
+    config.vm.synced_folder submissions_dir, "/submissions", :mount_options => ["ro"]
+
+    third_party_dir = "../../third-party"
+    if !Dir.exists?(third_party_dir)
+        Dir.mkdir(third_party_dir)
+    end
+    config.vm.synced_folder third_party_dir, "/third-party", :mount_options => ["ro"]
+
+    config.vm.provider "virtualbox" do |vb|
+        vb.memory = "8192"
+        vb.cpus = 6
+        vb.linked_clone = true
+    end
+
+    config.vm.provision "shell", run: "once", privileged: true, inline: <<-SHELL
+    apt-get update
+    DEBIAN_FRONTEND=noninteractive apt-get install -y fakeroot fuse-overlayfs fuse2fs uidmap squashfuse squashfs-tools
+    wget https://github.com/apptainer/apptainer/releases/download/v1.1.6/apptainer_1.1.6_amd64.deb
+    dpkg -i apptainer_1.1.6_amd64.deb
+
+    echo "export IPC_THIRD_PARTY=/third-party" >> .profile
+    SHELL
+end
