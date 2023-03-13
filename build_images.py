@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from pathlib import Path
-import os
+import os, sys, re
 from subprocess import call, check_call, check_output
 from glob import glob
 
@@ -63,21 +63,50 @@ def build_image(recipe_file, rev, warnings):
     else:
         write_file(rev_file, rev)
 
-
 def build_all_images(repo, warnings):
     rev = get_revision(repo)
     for recipe in glob(str(repo / "Apptainer.*")):
         build_image(recipe, rev, warnings)
 
+def update_and_build(planner_id, warnings):
+    repo = clone_and_update_repo(planner_id, warnings)
+    if repo:
+        build_all_images(repo, warnings)
 
-def build_all():
-    warnings = []
-    for planner_id in PLANNER_IDS:
+def update_and_build_all(planner_ids, recipe_files, warnings):
+    for planner_id in planner_ids:
+        update_and_build(planner_id, warnings)
+
+    for recipe_file in recipe_files:
+        planner_name = os.path.basename(os.path.dirname(recipe_file))
+        planner_id = int(planner_name[len("planner"):])
         repo = clone_and_update_repo(planner_id, warnings)
         if repo:
-            build_all_images(repo, warnings)
+            rev = get_revision(repo)
+            build_image(recipe, rev, warnings)
+
+
+if __name__ == "__main__":
+    planner_ids = []
+    recipe_files = []
+
+    for arg in sys.argv[1:]:
+        if re.match(r"^(\d+)", arg):
+            planner_ids.append(int(arg))
+        elif re.match(r"^planner(\d+)", arg):
+            planner_ids.append(int(arg[len("planner"):]))
+        else:
+            recipe_file = Path(arg)
+            if not re.match(r".*/planner\d+/Apptainer\..*", recipe_file):
+                print(f"Did not recognize '{arg}' as a path to build.")
+                sys.exit(1)
+            recipe_files.append(recipe_file)
+
+    if not planner_ids and not recipe_files:
+        planner_ids = PLANNER_IDS
+
+    warnings = []
+    update_and_build_all(planner_ids, recipe_files, warnings)
     if warnings:
         print("\nWarnings:\n" + "\n".join(warnings))
 
-if __name__ == "__main__":
-    build_all()
