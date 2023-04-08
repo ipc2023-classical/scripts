@@ -1,0 +1,4 @@
+;; Cost: 2
+;; Length: 2
+(do-lathe a0) ;; cost: 1
+(do-roll b0) ;; cost: 1

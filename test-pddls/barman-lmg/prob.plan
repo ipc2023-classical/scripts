@@ -1,0 +1,25 @@
+;; Cost: 59
+;; Length: 23
+(grasp left shot3) ;; cost: 1
+(fill-shot shot3 ingredient1 left right dispenser1) ;; cost: 10
+(pour-shot-to-clean-shaker shot3 ingredient1 shaker1 left l0 l1) ;; cost: 1
+(clean-shot shot3 ingredient1 left right) ;; cost: 1
+(fill-shot shot3 ingredient2 left right dispenser2) ;; cost: 10
+(grasp right shaker1) ;; cost: 1
+(pour-shot-to-used-shaker-2 shot3 ingredient2 shaker1 left l1 l2) ;; cost: 1
+(leave left shot3) ;; cost: 1
+(shake cocktail2 ingredient1 ingredient2 shaker1 right left) ;; cost: 1
+(pour-shaker-to-shot cocktail2 shot1 right shaker1 l2 l1) ;; cost: 1
+(empty-shaker right shaker1 cocktail2 l1 l0) ;; cost: 1
+(clean-shaker right left shaker1) ;; cost: 1
+(grasp left shot3) ;; cost: 1
+(leave right shaker1) ;; cost: 1
+(refill-shot shot3 ingredient2 left right dispenser2) ;; cost: 10
+(pour-shot-to-clean-shaker shot3 ingredient2 shaker1 left l0 l1) ;; cost: 1
+(clean-shot shot3 ingredient2 left right) ;; cost: 1
+(fill-shot shot3 ingredient3 left right dispenser3) ;; cost: 10
+(grasp right shaker1) ;; cost: 1
+(pour-shot-to-used-shaker-2 shot3 ingredient3 shaker1 left l1 l2) ;; cost: 1
+(leave left shot3) ;; cost: 1
+(shake cocktail1 ingredient2 ingredient3 shaker1 right left) ;; cost: 1
+(pour-shaker-to-shot-2 cocktail1 shot2 right shaker1 l2 l1) ;; cost: 1

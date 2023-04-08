@@ -1,0 +1,6 @@
+SupportsUniversallyQuantifiedPreconditions
+SupportsExistentiallyQuantifiedPreconditions
+SupportsUniversallyQuantifiedEffects
+SupportsNegativePreconditions
+SupportsConditionalEffects
+SupportsImplyPreconditions
