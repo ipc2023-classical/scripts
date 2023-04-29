@@ -3,7 +3,8 @@
 Vagrant.configure("2") do |config|
 
     config.vm.box = "generic/ubuntu2204"
-
+    
+    config.ssh.keep_alive = true
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
     images_dir = "../../images"

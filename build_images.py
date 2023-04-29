@@ -5,8 +5,17 @@ import os, sys, re
 from subprocess import call, check_call, check_output
 from glob import glob
 
-PLANNER_IDS = list(range(1, 34))
-PLANNER_IDS.remove(31) #unregistered
+PLANNER_IDS = list(range(1, 35))
+PLANNER_IDS.remove(5)  # not needed (team registered more repos then required)
+PLANNER_IDS.remove(6)  # not needed (team registered more repos then required)
+PLANNER_IDS.remove(9)  # not needed (team registered more repos then required)
+PLANNER_IDS.remove(11) # no content by submission deadline
+PLANNER_IDS.remove(12) # no content by submission deadline
+PLANNER_IDS.remove(24) # not needed (team registered more repos then required)
+PLANNER_IDS.remove(26) # not needed (team registered more repos then required)
+PLANNER_IDS.remove(27) # not needed (team registered more repos then required)
+PLANNER_IDS.remove(31) # unregistered
+PLANNER_IDS.remove(33) # unregistered
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 SUBMISSIONS_DIR = SCRIPT_DIR / ".." / "submissions"
@@ -75,6 +84,9 @@ def update_and_build(planner_id, warnings):
 
 def update_and_build_all(planner_ids, recipe_files, warnings):
     for planner_id in planner_ids:
+        print(f"Building planner {planner_id}")
+        import time
+        time.sleep(10)
         update_and_build(planner_id, warnings)
 
     for recipe_file in recipe_files:
@@ -83,7 +95,7 @@ def update_and_build_all(planner_ids, recipe_files, warnings):
         repo = clone_and_update_repo(planner_id, warnings)
         if repo:
             rev = get_revision(repo)
-            build_image(recipe, rev, warnings)
+            build_image(recipe_file, rev, warnings)
 
 
 if __name__ == "__main__":
@@ -97,7 +109,7 @@ if __name__ == "__main__":
             planner_ids.append(int(arg[len("planner"):]))
         else:
             recipe_file = Path(arg)
-            if not re.match(r".*/planner\d+/Apptainer\..*", recipe_file):
+            if not re.match(r".*/planner\d+/Apptainer\..*", str(recipe_file)):
                 print(f"Did not recognize '{arg}' as a path to build.")
                 sys.exit(1)
             recipe_files.append(recipe_file)
