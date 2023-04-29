@@ -1,1 +1,3 @@
 apptainer_builder/.vagrant
+experiments/data
+__pycache__
