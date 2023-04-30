@@ -17,11 +17,11 @@ def get_benchmark_suite(track, test_run):
         benchmarks = ["barman-lmg", "miconic-fulladl", "schedule"]
         if test_run:
             benchmarks = [f"{domain}:prob.pddl" for domain in benchmarks]
-    if track == tracks.OPT:
+    if track == tracks.SAT:
         benchmarks = ["barman-lmg", "miconic-fulladl", "schedule"]
         if test_run:
             benchmarks = [f"{domain}:prob.pddl" for domain in benchmarks]
-    if track == tracks.OPT:
+    if track == tracks.AGL:
         benchmarks = ["barman-lmg", "miconic-fulladl", "schedule"]
         if test_run:
             benchmarks = [f"{domain}:prob.pddl" for domain in benchmarks]
