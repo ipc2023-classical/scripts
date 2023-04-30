@@ -1,4 +1,5 @@
 apptainer_builder/.vagrant
 experiments/data
+experiments/logs
 experiments/venv
 __pycache__
