@@ -3,7 +3,7 @@
 import argparse
 from pathlib import Path
 import shutil
-from subprocess import check_call
+from subprocess import check_call, CalledProcessError
 
 from lab.tools import Properties
 
@@ -35,9 +35,14 @@ def sort_experiment(exp_dir, logs_dir):
 
 def commit_dirs(logs_dir):
     for repo in logs_dir.glob("*"):
+        import time
+        time.sleep(10)
         check_call(["git", "add", "--all"], cwd=repo)
-        check_call(["git", "commit", "-m", "Add logs"], cwd=repo)
-        check_call(["git", "push"], cwd=repo)
+        try:
+            check_call(["git", "commit", "-m", "Add logs"], cwd=repo)
+        except CalledProcessError:
+            pass # nothing to commit
+        check_call(["git", "push", "-u", "origin", "main"], cwd=repo)
 
 def create_repos(images_dir, logs_dir):
     for image in images_dir.glob("*.img"):
