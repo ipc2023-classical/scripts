@@ -12,9 +12,16 @@ def sort_run_dir(run_dir, logs_dir):
     props = Properties(str(run_dir / "static-properties"))
     algorithm = props["algorithm"]
     experiment = props["experiment_name"]
-    target = logs_dir/f"logs-{algorithm}"/experiment/run_dir.parent.name
-    target.mkdir(parents=True, exist_ok=True)
-    shutil.copytree(run_dir, target/run_dir.name)
+    target = logs_dir/f"logs-{algorithm}"/experiment/run_dir.parent.name/run_dir.name
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copytree(run_dir, target)
+    uncompressed_files = ["properties", "static-properties", "values.log", "watch.log"]
+    tar_filename = "other_files.tgz"
+    tar_cmd = ["tar"] + [f"--exclude={f}" for f in uncompressed_files] + ["-czf", tar_filename, "*"]
+    check_call(tar_cmd, cwd=target)
+    for f in target.glob("*"):
+        if f.name not in uncompressed_files + [tar_filename]:
+            f.unlink()
 
 def sort_experiment(exp_dir, logs_dir):
     for run_dir in exp_dir.glob("runs-*/*"):
