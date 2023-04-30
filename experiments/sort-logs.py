@@ -20,9 +20,9 @@ def sort_run_dir(run_dir, logs_dir):
     for f in target.glob("*"):
         if f.name not in uncompressed_files:
             compressed_files.append(f)
-    tar_filename = "other_files.tgz"
-    tar_cmd = ["tar", "-czf", tar_filename] + [str(f) for f in compressed_files]
-    check_call(tar_cmd, cwd=target)
+    tar_filename = target/"other_files.tgz"
+    tar_cmd = ["tar", "-czf", str(tar_filename)] + [str(f) for f in compressed_files]
+    check_call(tar_cmd)
     for f in compressed_files:
         f.unlink()
 
