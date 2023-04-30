@@ -35,9 +35,9 @@ def sort_experiment(exp_dir, logs_dir):
 
 def commit_dirs(logs_dir):
     for repo in logs_dir.glob("*"):
-        check_call(["git", "-C", str(repo), "add", "--all"])
-        check_call(["git", "-C", str(repo), "commit", "-m", "Add logs"])
-        check_call(["git", "-C", str(repo), "push"])
+        check_call(["git", "add", "--all"], cwd=repo)
+        check_call(["git", "commit", "-m", "Add logs"], cwd=repo)
+        check_call(["git", "push"], cwd=repo)
 
 def create_repos(images_dir, logs_dir):
     for image in images_dir.glob("*.img"):
