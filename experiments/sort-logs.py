@@ -23,8 +23,11 @@ def sort_run_dir(run_dir, logs_dir):
     tar_filename = target/"other_files.tgz"
     tar_cmd = ["tar", "-czf", str(tar_filename)] + [str(f) for f in compressed_files]
     check_call(tar_cmd)
-    for f in compressed_files:
-        f.unlink()
+    for path in compressed_files:
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
 
 def sort_experiment(exp_dir, logs_dir):
     for run_dir in exp_dir.glob("runs-*/*"):
