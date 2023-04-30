@@ -16,12 +16,15 @@ def sort_run_dir(run_dir, logs_dir):
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copytree(run_dir, target)
     uncompressed_files = ["properties", "static-properties", "values.log", "watch.log"]
-    tar_filename = "other_files.tgz"
-    tar_cmd = ["tar"] + [f"--exclude={f}" for f in uncompressed_files] + ["-czf", tar_filename, "*"]
-    check_call(tar_cmd, cwd=target)
+    compressed_files = []
     for f in target.glob("*"):
-        if f.name not in uncompressed_files + [tar_filename]:
-            f.unlink()
+        if f.name not in uncompressed_files:
+            compressed_files.append(f)
+    tar_filename = "other_files.tgz"
+    tar_cmd = ["tar", "-czf", tar_filename] + [str(f) for f in compressed_files]
+    check_call(tar_cmd, cwd=target)
+    for f in compressed_files:
+        f.unlink()
 
 def sort_experiment(exp_dir, logs_dir):
     for run_dir in exp_dir.glob("runs-*/*"):
