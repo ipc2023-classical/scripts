@@ -42,13 +42,16 @@ class IPCPlanner(object):
             if label not in properties:
                 self.warnings.append(f"Missing label: {label}")
 
+        self.name = properties.get("Name", "").strip()
+        self.description = properties.get("Description", "").strip()
+
         self.authors = [a.strip() for a in properties.get("Authors", "").split(",")]
         self.author_names = []
         self.author_emails = []
         for author in self.authors:
             m = re.match(IPCPlanner.EMAIL_PATTERN, author)
             if m:
-                self.author_names.append(m.group("name"))
+                self.author_names.append(m.group("name").strip())
                 self.author_emails.append(m.group("email"))
             else:
                 self.author_names.append(author)
@@ -87,7 +90,21 @@ def get_participating(track=None):
             planners.append(planner)
     return planners
 
+def create_website_text(track=None):
+    if track is None:
+        return "\n".join(create_website_text(track) for track in tracks.ALL)
+
+    lines = [f"### {track}"]
+    for planner in get_participating(track):
+        lines.append(f"""
+* **{planner.name}** [(planner abstract)](TODO{planner.shortname}_{track}.pdf)  
+  *{", ".join(planner.author_names)}*  
+  {planner.description}""")
+    return "\n".join(lines)
+
 if __name__ == "__main__":
+    print(create_website_text())
+    print()
     for planner in get_participating():
         for w in planner.warnings:
             print(f"{planner.shortname}: {w}")        
