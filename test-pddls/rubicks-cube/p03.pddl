@@ -1,0 +1,57 @@
+;; Generated with ./generator.py 3
+(define
+(problem rubicks-cube-shuffle-3)
+(:domain rubicks-cube)
+(:objects yellow white blue green orange red)
+(:init
+    (cube1 yellow red blue)
+    (cube2 white green red)
+    (cube3 red blue white)
+    (cube4 green yellow orange)
+    (cube5 green white orange)
+    (cube6 blue white orange)
+    (cube7 blue orange yellow)
+    (cube8 green yellow red)
+    (edge12 green red)
+    (edge24 orange blue)
+    (edge34 yellow orange)
+    (edge13 red white)
+    (edge15 green white)
+    (edge26 blue white)
+    (edge48 green yellow)
+    (edge37 red blue)
+    (edge56 white orange)
+    (edge68 orange green)
+    (edge78 yellow red)
+    (edge57 blue yellow)
+)
+(:goal
+    (and
+        (cube1 red white blue)
+        (cube2 orange white blue)
+        (cube3 red yellow blue)
+        (cube4 orange yellow blue)
+        (cube5 red white green)
+        (cube6 orange white green)
+        (cube7 red yellow green)
+        (cube8 orange yellow green)
+
+        (edge12 white blue)
+        (edge24 orange blue)
+        (edge34 yellow blue)
+        (edge13 red blue)
+
+        (edge15 red white)
+        (edge26 orange white)
+        (edge48 orange yellow)
+        (edge37 red yellow)
+
+        (edge56 white green)
+        (edge68 orange green)
+        (edge78 yellow green)
+        (edge57 red green)
+
+    )
+)
+)
+
