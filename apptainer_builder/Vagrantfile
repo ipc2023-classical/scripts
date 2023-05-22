@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
     config.vm.synced_folder third_party_dir, "/third-party", :mount_options => ["ro"]
 
     config.vm.provider "virtualbox" do |vb|
-        vb.memory = "8192"
+        vb.memory = "4096"
         vb.cpus = 6
         vb.linked_clone = true
     end
