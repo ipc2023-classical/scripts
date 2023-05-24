@@ -1,7 +1,7 @@
 ;; Generated with ./generator.py 2
 (define
-(problem rubicks-cube-shuffle-2)
-(:domain rubicks-cube)
+(problem rubiks-cube-shuffle-2)
+(:domain rubiks-cube)
 (:objects yellow white blue green orange red)
 (:init
     (cube1 red white blue)

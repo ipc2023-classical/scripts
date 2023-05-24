@@ -1,6 +1,6 @@
 ;; 12-action variant
 (define
-    (domain rubicks-cube)
+    (domain rubiks-cube)
     (:requirements :adl)
     (:predicates
         (cube1 ?x ?y ?z)
