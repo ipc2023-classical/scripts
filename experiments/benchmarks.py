@@ -54,6 +54,7 @@ BEST_KNOWN_BOUNDS = {
     "ricochet-robots": {
         "p01.pddl": (12,12),
         "p02.pddl": (17,17),
+        "p-20-20.pddl": (20,20),
     },
     "slitherlink": {
         "p01.pddl": (1,16),

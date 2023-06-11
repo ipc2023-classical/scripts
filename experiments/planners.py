@@ -102,9 +102,26 @@ def create_website_text(track=None):
   {planner.description}""")
     return "\n".join(lines)
 
+def generate_support_table(track=None):
+    if track is None:
+        return "\n".join(generate_support_table(track) for track in tracks.ALL)
+
+    lines = [f"### {track}"]
+    lines.append(f"Name|" + "|".join(IPCPlanner.PDDL_PROPERTIES))
+    for planner in get_participating(track):
+        supports = []
+        for prop in IPCPlanner.PDDL_PROPERTIES:
+            if prop in planner.unconditionally_supports:
+                supports.append("yes")
+            else:
+                supports.append("no")
+        lines.append(f"{planner.name}|" + "|".join(supports))
+    return "\n".join(lines)
+
 if __name__ == "__main__":
-    print(create_website_text())
-    print()
-    for planner in get_participating():
-        for w in planner.warnings:
-            print(f"{planner.shortname}: {w}")        
+    print(generate_support_table())
+#    print(create_website_text())
+#    print()
+#    for planner in get_participating():
+#        for w in planner.warnings:
+#            print(f"{planner.shortname}: {w}")        
