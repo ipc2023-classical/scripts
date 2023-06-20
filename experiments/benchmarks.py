@@ -1,3 +1,5 @@
+
+import json
 import logging
 import os
 from pathlib import Path
@@ -8,27 +10,69 @@ import tracks
 if "IPC_BENCHMARKS" not in os.environ:
     print("Set environment variable IPC_BENCHMARKS to directory containing PDDL benchmarks.")
     sys.exit(1)
+TEST_BENCHMARK_DIR = Path(os.environ["IPC_TEST_BENCHMARKS"])
 BENCHMARK_DIR = Path(os.environ["IPC_BENCHMARKS"])
 
 
 def get_benchmark_suite(track, test_run):
-    # TODO: use correct domains for each track (use full domains normally and only one problem per domain if test_run is true)
-    if track == tracks.OPT:
-        benchmarks = ["barman-lmg", "miconic-fulladl", "schedule", "rubiks-cube", "recharging-robots", "ricochet-robots", "slitherlink"]
-        if test_run:
-            benchmarks = [f"{domain}:prob.pddl" for domain in benchmarks]
-    elif track == tracks.SAT:
-        benchmarks = ["barman-lmg", "miconic-fulladl", "schedule", "rubiks-cube", "recharging-robots", "ricochet-robots", "slitherlink"]
-        if test_run:
-            benchmarks = [f"{domain}:prob.pddl" for domain in benchmarks]
-    elif track == tracks.AGL:
-        benchmarks = ["barman-lmg", "miconic-fulladl", "schedule", "rubiks-cube", "recharging-robots", "ricochet-robots", "slitherlink"]
-        if test_run:
-            benchmarks = [f"{domain}:prob.pddl" for domain in benchmarks]
+    if test_run:
+        benchmark_dir = TEST_BENCHMARK_DIR
+        if track == tracks.OPT:
+            benchmarks = ["barman-lmg", "miconic-fulladl", "schedule", "rubiks-cube", "recharging-robots", "ricochet-robots", "slitherlink"]
+        elif track == tracks.SAT:
+            benchmarks = ["barman-lmg", "miconic-fulladl", "schedule", "rubiks-cube", "recharging-robots", "ricochet-robots", "slitherlink"]
+        elif track == tracks.AGL:
+            benchmarks = ["barman-lmg", "miconic-fulladl", "schedule", "rubiks-cube", "recharging-robots", "ricochet-robots", "slitherlink"]
+        else:
+            logging.critical(f"Unknown track {track}")
     else:
-        logging.critical(f"Unknown track {track}")
+        if track == tracks.OPT:
+            benchmark_dir = BENCHMARK_DIR + "/opt"
+            benchmarks = [
+                "folding",
+                "folding-norm",
+                "labyrinth",
+                "quantum-layout",
+                "recharging-robots",
+                "recharging-robots-norm",
+                "ricochet-robots",
+                "rubiks-cube",
+                "rubiks-cube-norm",
+                "slitherlink",
+                "slitherlink-norm",
+            ]
+        elif track == tracks.SAT:
+            benchmark_dir = BENCHMARK_DIR + "/sat"
+            benchmarks = [
+                "folding",
+                "folding-norm",
+                "labyrinth",
+                "quantum-layout",
+                "recharging-robots",
+                "recharging-robots-norm",
+                "ricochet-robots",
+                "rubiks-cube",
+                "rubiks-cube-norm",
+                "slitherlink",
+                "slitherlink-norm",
+            ]
+        elif track == tracks.AGL:
+            benchmark_dir = BENCHMARK_DIR + "/agl"
+            benchmarks = [
+                "folding",
+                "folding-norm",
+                "labyrinth",
+                "quantum-layout",
+                "recharging-robots",
+                "recharging-robots-norm",
+                "ricochet-robots",
+                "rubiks-cube",
+                "rubiks-cube-norm",
+                "slitherlink",
+                "slitherlink-norm",
+            ]
     
-    return BENCHMARK_DIR, benchmarks
+    return benchmark_dir, benchmarks
 
 
 BEST_KNOWN_BOUNDS = {
@@ -62,5 +106,13 @@ BEST_KNOWN_BOUNDS = {
     },
 }
 
-def get_best_bounds(domain, problem):
-    return BEST_KNOWN_BOUNDS.get(domain, {}).get(problem, (0, float("inf")))
+with open(f"{BENCHMARK_DIR}/bounds.json") as f:
+    BEST_KNOWN_BOUNDS.update(json.load(f))
+
+def get_best_bounds(domain, problem, track=None):
+    lb, ub = BEST_KNOWN_BOUNDS.get(domain, {}).get(problem, (0, float("inf")))
+    if lb == 0 and ub == float("inf"):
+        short_track = tracks.TRACK_ABBRV.get(track)
+        lb, ub = BEST_KNOWN_BOUNDS.get(f"{short_track}/{domain}/{problem}", (0, float("inf")))
+    return lb, ub
+        

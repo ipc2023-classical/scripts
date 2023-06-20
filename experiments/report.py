@@ -14,7 +14,7 @@ def add_score(run):
         print(run)
     if run["coverage"]:
         track = run["track"]
-        best_lower_bound, best_upper_bound = benchmarks.get_best_bounds(run["domain"], run["problem"])
+        best_lower_bound, best_upper_bound = benchmarks.get_best_bounds(run["domain"], run["problem"], run["track"])
         if track == tracks.OPT:
             assert len(run["costs"]) == 1 and run["costs"][0] == run["cost"]
             cost = run["cost"]
