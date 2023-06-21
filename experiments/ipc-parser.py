@@ -71,7 +71,6 @@ def set_outcome(content, props):
         elif out_of_memory:
             props["error"] = "out_of_memory"
     else:
-        print(f"unexpected error: {props}", file=sys.stderr)
         props["error"] = "unexpected-error"
 
 

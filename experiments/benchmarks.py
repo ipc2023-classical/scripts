@@ -1,4 +1,3 @@
-
 import json
 import logging
 import os
@@ -116,3 +115,10 @@ def get_best_bounds(domain, problem, track=None):
         lb, ub = BEST_KNOWN_BOUNDS.get(f"{short_track}/{domain}/{problem}", (0, float("inf")))
     return lb, ub
         
+if __name__ == "__main__":
+    for d, probs in sorted(BEST_KNOWN_BOUNDS.items()):
+        if "/" in d:
+            print(f"{d}: {probs}")
+        else:
+            for p, b in sorted(probs.items()):
+                print(f"{d}/{p}: {b}")
