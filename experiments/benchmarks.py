@@ -26,7 +26,7 @@ def get_benchmark_suite(track, test_run):
             logging.critical(f"Unknown track {track}")
     else:
         if track == tracks.OPT:
-            benchmark_dir = BENCHMARK_DIR + "/opt"
+            benchmark_dir = BENCHMARK_DIR / "opt"
             benchmarks = [
                 "folding",
                 "folding-norm",
@@ -41,7 +41,7 @@ def get_benchmark_suite(track, test_run):
                 "slitherlink-norm",
             ]
         elif track == tracks.SAT:
-            benchmark_dir = BENCHMARK_DIR + "/sat"
+            benchmark_dir = BENCHMARK_DIR / "sat"
             benchmarks = [
                 "folding",
                 "folding-norm",
@@ -56,7 +56,7 @@ def get_benchmark_suite(track, test_run):
                 "slitherlink-norm",
             ]
         elif track == tracks.AGL:
-            benchmark_dir = BENCHMARK_DIR + "/agl"
+            benchmark_dir = BENCHMARK_DIR / "agl"
             benchmarks = [
                 "folding",
                 "folding-norm",
