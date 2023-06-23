@@ -149,7 +149,7 @@ class IPCReport(AbsoluteReport):
                 assert (variant_domain is None or variant_domain in algo_scores)
                 if variant_domain:
                     variant_score = algo_scores.get(variant_domain)
-                    if variant_score > score:
+                    if variant_score > score or (variant_score == score and not domain.endswith("-norm")):
                         cell = f"({score:0.2f})"
                         if domain in disqualified_domains:
                             cell = f"(disqualified)"
