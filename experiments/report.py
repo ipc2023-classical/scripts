@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+from collections import defaultdict, Counter
 import math
 
 from downward.reports.absolute import AbsoluteReport
@@ -38,6 +39,8 @@ def add_score(run):
                 score = 1 - math.log(time) / math.log(time_limit)
     run["score"] = score
     return run
+
+
 
 class IPCReport(AbsoluteReport):
     DEFAULT_ATTRIBUTES = ["coverage", "cost", "costs", "planner_exit_code", "planner_wall_clock_time",
@@ -111,3 +114,60 @@ class IPCReport(AbsoluteReport):
             errors.append("Report combines runs from infai_1 and infai_2 partitions.")
 
         return "\n".join(errors)
+
+    def get_markup(self):
+        other_tables = super().get_markup()
+
+        # indexed with algo, domain
+        scores = defaultdict(Counter)
+        invalid_plans = defaultdict(Counter)
+        for run in self.runs.values():
+            scores[run.get("algorithm")][run.get("domain")] += run.get("score", 0)
+            invalid_plans[run.get("algorithm")][run.get("domain")] += run.get("has_invalid_plans", 0)
+
+        table = self._get_empty_table(title="Overall Scores")
+        for algo, prelim_algo_scores in scores.items():
+            total_score = 0
+
+            # disqualify domain entries with invalid plans
+            algo_scores = dict(prelim_algo_scores)
+            disqualified_domains = set()
+            for domain, invalid_plans_in_domain in invalid_plans[algo].items():
+                if invalid_plans_in_domain:
+                    algo_scores[domain] = 0
+                    disqualified_domains.add(domain)
+
+            # Maximize over variant domains
+            for domain, score in sorted(algo_scores.items()):
+                cell = f"{score:0.2f}"
+
+                variant_domain = None
+                if domain.endswith("-norm"):
+                    variant_domain = domain[:-len("-norm")]
+                elif f"{domain}-norm" in algo_scores:
+                    variant_domain = f"{domain}-norm"
+                assert (variant_domain is None or variant_domain in algo_scores)
+                if variant_domain:
+                    variant_score = algo_scores.get(variant_domain)
+                    if variant_score > score:
+                        cell = f"({score:0.2f})"
+                        if domain in disqualified_domains:
+                            cell = f"(disqualified)"
+                    else:
+                        total_score += score
+                    if domain in disqualified_domains and variant_domain not in disqualified_domains:
+                        disqualified_domains.remove(domain)
+                else:
+                    total_score += score
+
+                if domain in disqualified_domains:
+                    cell = f"disqualified"
+                table.add_cell(algo, domain, f"{cell}")
+
+            if len(disqualified_domains) >= 2:
+                total_score = 0
+                table.add_cell(algo, "Sum", f"Disqualified")
+            else:
+                table.add_cell(algo, "Sum", f"{total_score:0.2f}")
+
+        return f"- [Scores #scores]\n{other_tables}\n\n== Scores ==[scores]\n\n{table}"

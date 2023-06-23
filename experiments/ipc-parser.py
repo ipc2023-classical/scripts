@@ -29,6 +29,8 @@ def validate_plan(domain, problem, plan):
 def parse_plans(content, props):
     props["costs"] = []
     for plan in Path(".").glob("sas_plan*"):
+        if plan.stem != "sas_plan":
+            continue
         props["costs"].append(validate_plan("domain.pddl", "problem.pddl", str(plan)))
 
     props["has_invalid_plans"] = int(INVALID_PLAN in props["costs"])
