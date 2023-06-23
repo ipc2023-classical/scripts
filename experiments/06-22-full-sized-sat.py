@@ -29,5 +29,7 @@ exp.add_planners(planners.get_participating(TRACK))
 exp.add_suite(*benchmarks.get_benchmark_suite(TRACK, TESTRUN))
 
 exp.add_report(report.IPCReport(attributes=report.IPCReport.DEFAULT_ATTRIBUTES), outfile=f"{exp.name}.html")
+for planner in planners.get_participating(TRACK):
+    exp.add_report(report.IPCReport(attributes=report.IPCReport.DEFAULT_ATTRIBUTES, filter_algorithm=planner.shortname), outfile=f"{planner.shortname}.html")
 exp.add_parse_again_step()
 exp.run_steps()
