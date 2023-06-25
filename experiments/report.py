@@ -22,12 +22,8 @@ def add_score(run):
         if track == tracks.OPT:
             assert len(run["costs"]) == 1 and run["costs"][0] == run["cost"]
             cost = run["cost"]
-            if cost < best_lower_bound or cost > best_upper_bound:
-                run["has_suboptimal_plan"] = 1
-                score = 0
-            else:
-                run["has_suboptimal_plan"] = 0
-                score = 1
+            run["has_suboptimal_plan"] = int(cost < best_lower_bound or cost > best_upper_bound)
+            score = 1
         elif track == tracks.SAT:
             score = best_upper_bound / run["cost"]
         elif track == tracks.AGL:
@@ -37,7 +33,9 @@ def add_score(run):
                 score = 1
             else:
                 score = 1 - math.log(time) / math.log(time_limit)
+
     run["score"] = score
+    run["run_disqualified"] = int(bool(run.get("has_suboptimal_plan", False) or run.get("has_invalid_plans", False)))
     return run
 
 
@@ -120,20 +118,20 @@ class IPCReport(AbsoluteReport):
 
         # indexed with algo, domain
         scores = defaultdict(Counter)
-        invalid_plans = defaultdict(Counter)
+        disqualified_runs = defaultdict(Counter)
         for run in self.runs.values():
             scores[run.get("algorithm")][run.get("domain")] += run.get("score", 0)
-            invalid_plans[run.get("algorithm")][run.get("domain")] += run.get("has_invalid_plans", 0)
+            disqualified_runs[run.get("algorithm")][run.get("domain")] += run.get("run_disqualified", 0)
 
         table = self._get_empty_table(title="Overall Scores")
         for algo, prelim_algo_scores in scores.items():
             total_score = 0
 
-            # disqualify domain entries with invalid plans
+            # disqualify domain entries with invalid or suboptimal plans
             algo_scores = dict(prelim_algo_scores)
             disqualified_domains = set()
-            for domain, invalid_plans_in_domain in invalid_plans[algo].items():
-                if invalid_plans_in_domain:
+            for domain, num_disqualified_runs in disqualified_runs[algo].items():
+                if num_disqualified_runs:
                     algo_scores[domain] = 0
                     disqualified_domains.add(domain)
 
