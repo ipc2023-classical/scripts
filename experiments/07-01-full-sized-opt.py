@@ -11,13 +11,14 @@ import tracks
 TRACK = tracks.OPT
 TIME_LIMIT = 1800 #s
 MEMORY_LIMIT = 8192 #MB
+NUM_RESERVED_CORES = 10
 
 if experiment.running_on_cluster():
     TESTRUN = False
     ENVIRONMENT = BaselSlurmEnvironment(
         partition="infai_3",
         email="florian.pommerening@unibas.ch",
-        memory_per_cpu=f"{10*3.5*1024}M",  # We reserve enough memory such that each task blocks 10 nodes (actual memory limit is set internally)
+        memory_per_cpu=f"{int(NUM_RESERVED_CORES*3.5*1024)}M",  # We reserve enough memory such that each task blocks 10 nodes (actual memory limit is set internally)
         export=["PATH"],
     )
 else:
