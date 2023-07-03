@@ -11,6 +11,7 @@ if "IPC_BENCHMARKS" not in os.environ:
     sys.exit(1)
 TEST_BENCHMARK_DIR = Path(os.environ["IPC_TEST_BENCHMARKS"])
 BENCHMARK_DIR = Path(os.environ["IPC_BENCHMARKS"])
+BENCHMARK_DIR2018 = Path(os.environ["IPC2018_BENCHMARKS"])
 
 
 def get_benchmark_suite(track, test_run):
@@ -73,6 +74,41 @@ def get_benchmark_suite(track, test_run):
     
     return benchmark_dir, benchmarks
 
+def get_ipc2018_suite(track):
+    if track == tracks.OPT:
+        benchmark_dir = BENCHMARK_DIR2018 / "opt"
+        benchmarks = [
+            "agricola",
+            "caldera-split",
+            "caldera",
+            "data-network",
+            "nurikabe",
+            "organic-synthesis-split",
+            "organic-synthesis",
+            "petri-net-alignment",
+            "settlers",
+            "snake",
+            "spider",
+            "termes",
+        ]
+    elif track == tracks.SAT or track == tracks.AGL:
+        benchmark_dir = BENCHMARK_DIR2018 / "sat"
+        benchmarks = [
+            "agricola",
+            "caldera-split",
+            "caldera",
+            "data-network",
+            "flashfill",
+            "nurikabe",
+            "organic-synthesis-split",
+            "organic-synthesis",
+            "settlers",
+            "snake",
+            "spider",
+            "termes",
+        ]
+    return benchmark_dir, benchmarks
+
 
 BEST_KNOWN_BOUNDS = {
     "test/barman-lmg/prob.pddl": (59, 59),
@@ -92,6 +128,8 @@ BEST_KNOWN_BOUNDS = {
 }
 
 with open(f"{BENCHMARK_DIR}/bounds.json") as f:
+    BEST_KNOWN_BOUNDS.update(json.load(f))
+with open(f"{BENCHMARK_DIR2018}/bounds.json") as f:
     BEST_KNOWN_BOUNDS.update(json.load(f))
 
 def get_best_bounds(domain, problem, track="test"):
