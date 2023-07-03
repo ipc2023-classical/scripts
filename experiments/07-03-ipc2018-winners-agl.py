@@ -25,7 +25,7 @@ else:
     TESTRUN = True
     ENVIRONMENT = LocalEnvironment(processes=2)
 
-PLANNERS = [p for p in planners.get_participating(TRACK) if p.name.startswith("ipc2018_")]
+PLANNERS = [p for p in planners.get_participating(TRACK) if p.shortname.startswith("ipc2018_")]
 
 exp = experiment.IPCExperiment(track=TRACK, time_limit=TIME_LIMIT, memory_limit=MEMORY_LIMIT, environment=ENVIRONMENT)
 exp.add_planners(PLANNERS)
